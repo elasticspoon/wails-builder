@@ -1,28 +1,30 @@
-import {useState} from 'react';
-import logo from './assets/images/logo-universal.png';
-import './App.css';
-import {Greet} from "../wailsjs/go/main/App";
+import { useState } from "react";
+import "./App.css";
+import { GetProfile } from "../wailsjs/go/profile/Profile";
+import { LogDebug } from "../wailsjs/runtime/runtime.js";
 
-function App() {
-    const [resultText, setResultText] = useState("Please enter your name below 👇");
-    const [name, setName] = useState('');
-    const updateName = (e: any) => setName(e.target.value);
-    const updateResultText = (result: string) => setResultText(result);
+// const [profile, setProfile] = useState({});
 
-    function greet() {
-        Greet(name).then(updateResultText);
-    }
-
-    return (
-        <div id="App">
-            <img src={logo} id="logo" alt="logo"/>
-            <div id="result" className="result">{resultText}</div>
-            <div id="input" className="input-box">
-                <input id="name" className="input" onChange={updateName} autoComplete="off" name="input" type="text"/>
-                <button className="btn" onClick={greet}>Greet</button>
-            </div>
-        </div>
-    )
+function showProfile() {
+  GetProfile()
+    .then((v) => {
+      console.log(v);
+      // LogDebug(JSON.stringify(v));
+    })
+    .catch((e) => {
+      console.log(e);
+      // LogDebug(JSON.stringify(e));
+    });
 }
 
-export default App
+function App() {
+  return (
+    <div id="App">
+      <button className="btn" onClick={showProfile}>
+        Greet
+      </button>
+    </div>
+  );
+}
+
+export default App;
