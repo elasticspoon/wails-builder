@@ -1,28 +1,30 @@
 import { useState } from "react";
 import "./App.css";
 import { GetProfile } from "../wailsjs/go/profile/Profile";
-import { LogDebug } from "../wailsjs/runtime/runtime.js";
+import { profile } from "../wailsjs/go/models";
 
-// const [profile, setProfile] = useState({});
+function Profile() {
+  const [userProfile, setUserProfile] = useState<profile.Profile>();
 
-function showProfile() {
-  GetProfile()
-    .then((v) => {
-      console.log(v);
-      // LogDebug(JSON.stringify(v));
-    })
-    .catch((e) => {
-      console.log(e);
-      // LogDebug(JSON.stringify(e));
-    });
+  async function updateProfile() {
+    let profile = await GetProfile();
+    setUserProfile(profile);
+  }
+
+  return (
+    <>
+      <button className="btn" onClick={updateProfile}>
+        Greet
+      </button>
+      {userProfile && userProfile!.workExperience?.title}
+    </>
+  );
 }
 
 function App() {
   return (
     <div id="App">
-      <button className="btn" onClick={showProfile}>
-        Greet
-      </button>
+      <Profile />
     </div>
   );
 }
