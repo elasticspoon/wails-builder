@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import { GetProfile } from "../wailsjs/go/profile/Profile";
 import { profile } from "../wailsjs/go/models";
@@ -57,20 +57,26 @@ function ProfileInputSection({ profile }: { profile: profile.HeaderSection }) {
   return <section>{fields}</section>;
 }
 
-// FIXME: This is not a proper type
-type SectionFields = "name" | "phone" | "email";
+function show(profile: Section, field: ProfileFieldKeys<typeof profile>) {
+  return profile[field]?.active ? profile[field]?.data : null;
+}
+
+type ProfileFieldKeys<T> = {
+  [K in keyof T]-?: T[K] extends profile.ProfileField | undefined ? K : never;
+}[keyof T];
 
 function ProfileRenderSection({ profile }: { profile: profile.HeaderSection }) {
-  function show(field: SectionFields) {
-    return profile[field]?.active ? profile[field]?.data : null;
-  }
-
   return (
     <article>
-      <h1>{show("name")}</h1>
+      <h1>{show(profile, "name")}</h1>
       <br />
       <ul>
-        <li></li>
+        <li>{show(profile, "phone")}</li>
+        <li>{show(profile, "email")}</li>
+        <li>{show(profile, "location")}</li>
+        <li>{show(profile, "github")}</li>
+        <li>{show(profile, "linkedin")}</li>
+        <li>{show(profile, "portfolio")}</li>
       </ul>
     </article>
   );
@@ -102,14 +108,18 @@ function Navbar({ updateProfile }: { updateProfile: () => Promise<void> }) {
 function App() {
   const [userProfile, setUserProfile] = useState<profile.Profile>();
 
-  if (userProfile === undefined) {
+  useEffect(() => {
     updateProfile();
-  }
+  }, []);
 
   async function updateProfile() {
-    let profile = await GetProfile();
-    console.log(profile);
-    setUserProfile(profile);
+    GetProfile()
+      .then((profile) => {
+        setUserProfile(profile);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
 
   return (
