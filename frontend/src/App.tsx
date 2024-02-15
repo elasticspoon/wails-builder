@@ -28,14 +28,7 @@ function App() {
     <div id="App">
       <Navbar updateProfile={updateProfile} />
       {userProfile && (
-        <Formik
-          initialValues={{ userProfile }}
-          onSubmit={async (values, { setSubmitting }) => {
-            console.log("submitting :)");
-            await new Promise((r) => setTimeout(r, 500));
-            setSubmitting(false);
-          }}
-        >
+        <Formik initialValues={{ ...userProfile }} onSubmit={() => {}}>
           <>
             {/* <ProfileInput /> */}
             <ProfileRender />

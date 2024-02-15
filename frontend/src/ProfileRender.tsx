@@ -4,6 +4,7 @@ import { Form, useFormikContext } from "formik";
 type Section = profile.HeaderSection;
 
 export function ProfileRender() {
+  // const { values: userProfile } = useFormikContext<profile.Profile>();
   const { values: userProfile } = useFormikContext<profile.Profile>();
 
   const renderSections = Object.entries(userProfile).flatMap(([key, obj]) => {
@@ -34,7 +35,6 @@ type ProfileFieldKeys<T> = {
 }[keyof T];
 
 function ProfileRenderSection({ profile }: { profile: profile.HeaderSection }) {
-  console.log(profile);
   return (
     <article>
       <h1>{show(profile, "name")}</h1>
