@@ -3,7 +3,7 @@ import { Formik } from "formik";
 import "./App.css";
 import { GetProfile } from "../wailsjs/go/profile/Profile";
 import { profile } from "../wailsjs/go/models";
-// import { ProfileInput } from "./ProfileInput";
+import { ProfileInput } from "./ProfileInput";
 import { ProfileRender } from "./ProfileRender";
 import { Navbar } from "./Navbar";
 
@@ -30,7 +30,7 @@ function App() {
       {userProfile && (
         <Formik initialValues={{ ...userProfile }} onSubmit={() => {}}>
           <>
-            {/* <ProfileInput /> */}
+            <ProfileInput />
             <ProfileRender />
           </>
         </Formik>
