@@ -53,6 +53,7 @@ type ProfileField struct {
 func NewProfile() *Profile {
 	profile := &Profile{}
 	profile.Header = defaultHeaderSection()
+
 	return profile
 }
 

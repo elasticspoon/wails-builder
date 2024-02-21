@@ -3,7 +3,7 @@ package main
 import (
 	"embed"
 
-	profile "github.com/elasticspoon/resume-builder/backend"
+	"github.com/elasticspoon/resume-builder/backend"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -14,7 +14,7 @@ var assets embed.FS
 
 func main() {
 	// Create an instance of the app structure
-	profile := profile.NewProfile()
+	p := profile.NewProfile()
 	app := NewApp()
 
 	// Create application with options
@@ -29,7 +29,8 @@ func main() {
 		OnStartup:        app.startup,
 		Bind: []interface{}{
 			app,
-			profile,
+			p,
+			&profile.Generator{},
 		},
 	})
 	if err != nil {

@@ -1,11 +1,16 @@
 import { profile } from "../wailsjs/go/models";
-import { Form, useFormikContext } from "formik";
+import { useFormikContext } from "formik";
 
 type Section = profile.HeaderSection;
 
-export function ProfileRender() {
-  // const { values: userProfile } = useFormikContext<profile.Profile>();
-  const { values: userProfile } = useFormikContext<profile.Profile>();
+export function ProfileRender({ profile }: { profile?: profile.Profile }) {
+  let userProfile;
+  if (profile === undefined) {
+    let { values: up } = useFormikContext<profile.Profile>();
+    userProfile = up;
+  } else {
+    userProfile = profile;
+  }
 
   const renderSections = Object.entries(userProfile).flatMap(([key, obj]) => {
     if (typeof obj === "object") {
@@ -23,7 +28,7 @@ export function ProfileRender() {
     }
   }
 
-  return <Form>{renderSections}</Form>;
+  return <div>{renderSections}</div>;
 }
 
 function show(profile: Section, field: ProfileFieldKeys<typeof profile>) {

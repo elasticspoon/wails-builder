@@ -1,17 +1,13 @@
 import { profile } from "../wailsjs/go/models";
-import {
-  Form,
-  useField,
-  useFormikContext,
-  FieldHookConfig,
-  FieldAttributes,
-} from "formik";
+import { Form, useField, useFormikContext, FieldAttributes } from "formik";
 
 interface TextInputProps extends FieldAttributes<any> {
   label: string;
 }
 
 function TextInput({ label, ...props }: TextInputProps) {
+  // FIXME:
+  // @ts-ignore
   const [field] = useField(props);
   return (
     <>
@@ -22,6 +18,8 @@ function TextInput({ label, ...props }: TextInputProps) {
 }
 
 function Checkbox({ ...props }) {
+  // FIXME:
+  // @ts-ignore
   const [field] = useField({ ...props, type: "checkbox" });
   return (
     <>
@@ -74,7 +72,12 @@ export function ProfileInput() {
     }
   }
 
-  return <Form>{inputSections}</Form>;
+  return (
+    <Form>
+      {inputSections}
+      <button type="submit">Save</button>
+    </Form>
+  );
 }
 
 function ProfileInputSection({
