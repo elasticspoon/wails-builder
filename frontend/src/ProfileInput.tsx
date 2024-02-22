@@ -51,7 +51,7 @@ function FieldInput({ name, parent }: { name: string; parent?: string }) {
   );
 }
 
-type Section = profile.HeaderSection;
+type Section = profile.HeaderSection | profile.WorkExperience;
 
 export function ProfileInput() {
   const { values: userProfile } = useFormikContext<profile.Profile>();
@@ -67,7 +67,22 @@ export function ProfileInput() {
   function generateInputSection(key: string, section: Section) {
     switch (key) {
       case "header": {
-        return <ProfileInputSection parent={key} profile={section} key={key} />;
+        return (
+          <ProfileInputSection
+            parent={key}
+            profile={section as profile.HeaderSection}
+            key={key}
+          />
+        );
+      }
+      case "workExperience": {
+        return (
+          <ProfileInputSection
+            parent={key}
+            profile={section as profile.WorkExperience}
+            key={key}
+          />
+        );
       }
     }
   }
@@ -84,7 +99,7 @@ function ProfileInputSection({
   profile,
   parent,
 }: {
-  profile: profile.HeaderSection;
+  profile: Section;
   parent: string;
 }) {
   const fields = Object.entries(profile).flatMap(([key, data]) => {

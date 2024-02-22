@@ -1,7 +1,7 @@
 import { profile } from "../wailsjs/go/models";
 import { useFormikContext } from "formik";
 
-type Section = profile.HeaderSection;
+type Section = profile.HeaderSection | profile.WorkExperience;
 
 export function ProfileRender({ profile }: { profile?: profile.Profile }) {
   let userProfile;
@@ -23,34 +23,101 @@ export function ProfileRender({ profile }: { profile?: profile.Profile }) {
   function generateRenderSection(key: string, section: Section) {
     switch (key) {
       case "header": {
-        return <ProfileRenderSection profile={section} key={key} />;
+        return (
+          section && (
+            <RenderHeader
+              profile={section as profile.HeaderSection}
+              key={key}
+            />
+          )
+        );
+      }
+      case "workExperience": {
+        return (
+          section && (
+            <RenderExperience
+              exp={section as profile.WorkExperience}
+              key={key}
+            />
+          )
+        );
       }
     }
   }
 
-  return <div>{renderSections}</div>;
+  return <div id="resume">{renderSections}</div>;
 }
 
-function show(profile: Section, field: ProfileFieldKeys<typeof profile>) {
-  return profile[field]?.active ? profile[field]?.data : null;
+// function show(profile: Section, field: ProfileFieldKeys<typeof profile>) {
+//   return profile[field]?.active ? profile[field]?.data : null;
+// }
+//
+// type ProfileFieldKeys<T> = {
+//   [K in keyof T]-?: T[K] extends profile.ProfileField | undefined ? K : never;
+// }[keyof T];
+
+function RenderExperience({ exp }: { exp: profile.WorkExperience }) {
+  return (
+    <section>
+      <h2 id="experience">Experience</h2>
+      {exp.jobs.map((section) => (
+        <RenderWorkSection key={section.title} section={section} />
+      ))}
+    </section>
+  );
 }
 
-type ProfileFieldKeys<T> = {
-  [K in keyof T]-?: T[K] extends profile.ProfileField | undefined ? K : never;
-}[keyof T];
+function RenderWorkSection({ section }: { section: profile.JobSection }) {
+  return (
+    <>
+      <h3>
+        <span>
+          {section.jobTitle?.data}, {section.company?.data}
+        </span>
+        <span>
+          {section.startDate?.data} -{" "}
+          {section.endDate ? section.endDate.data : "present"}
+        </span>
+      </h3>
+      {section.description?.active && <p>{section.description.data}</p>}
+      {section.jobDuties.length > 0 && (
+        <ul>
+          {section.jobDuties.map((duty, index) => {
+            return duty.active && <li key={index}>{duty.data}</li>;
+          })}
+        </ul>
+      )}
+    </>
+  );
+}
 
-function ProfileRenderSection({ profile }: { profile: profile.HeaderSection }) {
+function RenderHeader({ profile }: { profile: profile.HeaderSection }) {
   return (
     <article>
-      <h1>{show(profile, "name")}</h1>
-      <br />
+      <h1 id={profile.name?.data}>{profile.name?.data}</h1>
       <ul>
-        <li>{show(profile, "phone")}</li>
-        <li>{show(profile, "email")}</li>
-        <li>{show(profile, "location")}</li>
-        <li>{show(profile, "github")}</li>
-        <li>{show(profile, "linkedin")}</li>
-        <li>{show(profile, "portfolio")}</li>
+        {profile.email?.active && (
+          <li>
+            <a href={`mailto:${profile.email?.data}`}>{profile.email?.data}</a>
+          </li>
+        )}
+        {profile.portfolio?.active && (
+          <li>
+            <a href={profile.portfolio.data}>{profile.portfolio.data}</a>
+          </li>
+        )}
+        {profile.linkedin?.active && (
+          <li>
+            <a href={profile.linkedin.data}>{profile.linkedin.data}</a>
+          </li>
+        )}
+        {profile.phone?.active && <li>{profile.phone.data}</li>}
+        {profile.github?.active && (
+          <li>
+            <a href={profile.github.data}>{profile.github.data}</a>
+          </li>
+        )}
+        {profile.location?.active && <li>{profile.location.data}</li>}
       </ul>
     </article>
   );

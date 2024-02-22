@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Form, Formik, useFormikContext } from "formik";
-import "./App.css";
+import "../../backend/styles.css";
 import { GetProfile } from "../wailsjs/go/profile/Profile";
 import { profile } from "../wailsjs/go/models";
 import { ProfileInput } from "./ProfileInput";

@@ -3,7 +3,6 @@ package profile
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"strings"
 	"text/template"
 
@@ -17,18 +16,15 @@ func (g *Generator) GeneratePDF(dom string) error {
 	if err != nil {
 		return err
 	}
-	pdfg.Dpi.Set(300)
-	pdfg.Orientation.Set(wkhtmltopdf.OrientationLandscape)
-	pdfg.Grayscale.Set(true)
+	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
+	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA5)
 
 	// Create a new input page from an URL
 	v := renderHtml(dom)
 	page := wkhtmltopdf.NewPageReader(strings.NewReader(v))
 
 	// Set options for this page
-	page.FooterRight.Set("[page]")
-	page.FooterFontSize.Set(10)
-	page.Zoom.Set(0.95)
+	page.UserStyleSheet.Set("./backend/styles.css")
 
 	// Add to document
 	pdfg.AddPage(page)
@@ -49,21 +45,12 @@ func (g *Generator) GeneratePDF(dom string) error {
 	return nil
 }
 
-func loadCss() string {
-	dat, err := os.ReadFile("./backend/styles.css")
-	if err != nil {
-		fmt.Println(err)
-	}
-	return string(dat)
-}
-
 func renderHtml(dom string) string {
 	tmpl := template.Must(template.ParseFiles("./backend/template.html"))
 	output := new(bytes.Buffer)
 	data := struct {
-		PageData   string
-		PageStyles string
-	}{PageData: dom, PageStyles: loadCss()}
+		PageData string
+	}{PageData: dom}
 
 	tmpl.Execute(output, data)
 
