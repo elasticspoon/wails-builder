@@ -2,6 +2,7 @@ export namespace profile {
 	
 	export class ProfileField {
 	    id: string;
+	    type: string;
 	    data: string;
 	    active: boolean;
 	
@@ -12,6 +13,7 @@ export namespace profile {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.id = source["id"];
+	        this.type = source["type"];
 	        this.data = source["data"];
 	        this.active = source["active"];
 	    }
@@ -19,6 +21,7 @@ export namespace profile {
 	export class HeaderSection {
 	    title: string;
 	    active: string;
+	    type: string;
 	    name?: ProfileField;
 	    phone?: ProfileField;
 	    email?: ProfileField;
@@ -36,6 +39,7 @@ export namespace profile {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.title = source["title"];
 	        this.active = source["active"];
+	        this.type = source["type"];
 	        this.name = this.convertValues(source["name"], ProfileField);
 	        this.phone = this.convertValues(source["phone"], ProfileField);
 	        this.email = this.convertValues(source["email"], ProfileField);
@@ -67,6 +71,7 @@ export namespace profile {
 	export class ProfileSection {
 	    title: string;
 	    active: string;
+	    type: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new ProfileSection(source);
@@ -76,11 +81,13 @@ export namespace profile {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.title = source["title"];
 	        this.active = source["active"];
+	        this.type = source["type"];
 	    }
 	}
 	export class JobSection {
 	    title: string;
 	    active: string;
+	    type: string;
 	    jobTitle?: ProfileField;
 	    company?: ProfileField;
 	    location?: ProfileField;
@@ -97,6 +104,7 @@ export namespace profile {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.title = source["title"];
 	        this.active = source["active"];
+	        this.type = source["type"];
 	        this.jobTitle = this.convertValues(source["jobTitle"], ProfileField);
 	        this.company = this.convertValues(source["company"], ProfileField);
 	        this.location = this.convertValues(source["location"], ProfileField);
@@ -127,6 +135,7 @@ export namespace profile {
 	export class WorkExperience {
 	    title: string;
 	    active: string;
+	    type: string;
 	    jobs: JobSection[];
 	
 	    static createFrom(source: any = {}) {
@@ -137,6 +146,7 @@ export namespace profile {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.title = source["title"];
 	        this.active = source["active"];
+	        this.type = source["type"];
 	        this.jobs = this.convertValues(source["jobs"], JobSection);
 	    }
 	

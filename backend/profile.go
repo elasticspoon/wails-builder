@@ -10,6 +10,7 @@ type Profile struct {
 type ProfileSection struct {
 	Title  string `json:"title"`
 	Active string `json:"active"`
+	Type   string `json:"type"`
 }
 
 type HeaderSection struct {
@@ -29,6 +30,7 @@ func defaultHeaderSection() *HeaderSection {
 		ProfileSection: ProfileSection{
 			Title:  "Header",
 			Active: "true",
+			Type:   "section",
 		},
 		Name:      &ProfileField{Id: "name", Data: "Enter Name", Active: true},
 		Phone:     &ProfileField{Id: "phone", Data: "555-555-5555", Active: true},
@@ -60,6 +62,7 @@ func defaultWorkExperience() *WorkExperience {
 	return &WorkExperience{
 		ProfileSection: ProfileSection{
 			Title:  "Work Experience",
+			Type:   "section",
 			Active: "true",
 		},
 		Jobs: []*JobSection{sampleJobSection1(), sampleJobSection2()},
@@ -71,23 +74,24 @@ func sampleJobSection1() *JobSection {
 		ProfileSection: ProfileSection{
 			Title:  "Pied Piper",
 			Active: "true",
+			Type:   "section",
 		},
-		JobTitle:  &ProfileField{Id: "title", Data: "CEO/President", Active: true},
-		Company:   &ProfileField{Id: "company", Data: "Pied Piper", Active: true},
-		Location:  &ProfileField{Id: "location", Data: "City, State", Active: false},
-		StartDate: &ProfileField{Id: "startDate", Data: "Dec 2013", Active: true},
-		EndDate:   &ProfileField{Id: "endDate", Data: "Dec 2014", Active: true},
+		JobTitle:  &ProfileField{Id: "title", Data: "CEO/President", Type: "field", Active: true},
+		Company:   &ProfileField{Id: "company", Data: "Pied Piper", Type: "field", Active: true},
+		Location:  &ProfileField{Id: "location", Data: "City, State", Type: "field", Active: false},
+		StartDate: &ProfileField{Id: "startDate", Data: "Dec 2013", Type: "field", Active: true},
+		EndDate:   &ProfileField{Id: "endDate", Data: "Dec 2014", Type: "field", Active: true},
 		Description: &ProfileField{
-			Id: "description", Active: true,
+			Id: "description", Type: "field", Active: true,
 			Data: `Pied Piper is a multi-platform technology based on a proprietary universal
 compression algorithm that has consistently fielded high Weisman Scores™ that
 are not merely competitive, but approach the theoretical limit of lossless
 compression.`,
 		},
 		JobDuties: []*ProfileField{
-			{Data: "Build an algorithm for artist to detect if their music was violating copyright infringement laws", Active: true},
-			{Data: "Successfully won Techcrunch Disrupt", Active: true},
-			{Data: "Optimized an algorithm that holds the current world record for Weisman Scores", Active: true},
+			{Data: "Build an algorithm for artist to detect if their music was violating copyright infringement laws", Type: "field", Active: true},
+			{Data: "Successfully won Techcrunch Disrupt", Type: "field", Active: true},
+			{Data: "Optimized an algorithm that holds the current world record for Weisman Scores", Type: "field", Active: true},
 		},
 	}
 }
@@ -97,24 +101,26 @@ func sampleJobSection2() *JobSection {
 		ProfileSection: ProfileSection{
 			Title:  "Coder Dojo",
 			Active: "true",
+			Type:   "section",
 		},
-		JobTitle:  &ProfileField{Id: "title", Data: "Teacher", Active: true},
-		Company:   &ProfileField{Id: "company", Data: "Coder Dojo", Active: true},
-		Location:  &ProfileField{Id: "location", Data: "City, State", Active: false},
-		StartDate: &ProfileField{Id: "startDate", Data: "July 2013", Active: true},
-		EndDate:   &ProfileField{Id: "endDate", Data: "Dec 2013", Active: true},
+		JobTitle:  &ProfileField{Id: "title", Data: "Teacher", Type: "field", Active: true},
+		Company:   &ProfileField{Id: "company", Data: "Coder Dojo", Type: "field", Active: true},
+		Location:  &ProfileField{Id: "location", Data: "City, State", Type: "field", Active: false},
+		StartDate: &ProfileField{Id: "startDate", Data: "July 2013", Type: "field", Active: true},
+		EndDate:   &ProfileField{Id: "endDate", Data: "Dec 2013", Type: "field", Active: true},
 		Description: &ProfileField{
-			Id: "description", Active: true,
+			Id: "description", Type: "field", Active: true,
 			Data: `Global movement of free coding clubs for young people.`,
 		},
 		JobDuties: []*ProfileField{
-			{Data: "Awarded 'Teacher of the Month'", Active: true},
+			{Data: "Awarded 'Teacher of the Month'", Type: "field", Active: true},
 		},
 	}
 }
 
 type ProfileField struct {
 	Id     string `json:"id"`
+	Type   string `json:"type"`
 	Data   string `json:"data"`
 	Active bool   `json:"active"`
 }
