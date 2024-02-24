@@ -41,10 +41,14 @@ function App() {
             setUserProfile(k);
           }}
         >
-          <>
+          <div
+            style={{
+              display: "flex",
+            }}
+          >
             <ProfileInput />
             <ProfileRender />
-          </>
+          </div>
         </Formik>
       )}
     </div>

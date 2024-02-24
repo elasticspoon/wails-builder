@@ -21,31 +21,26 @@ export function ProfileRender({ profile }: { profile?: profile.Profile }) {
   });
 
   function generateRenderSection(key: string, section: Section) {
+    if (!section) return;
     switch (key) {
       case "header": {
         return (
-          section && (
-            <RenderHeader
-              profile={section as profile.HeaderSection}
-              key={key}
-            />
-          )
+          <RenderHeader profile={section as profile.HeaderSection} key={key} />
         );
       }
       case "workExperience": {
         return (
-          section && (
-            <RenderExperience
-              exp={section as profile.WorkExperience}
-              key={key}
-            />
-          )
+          <RenderExperience exp={section as profile.WorkExperience} key={key} />
         );
       }
     }
   }
 
-  return <div id="resume">{renderSections}</div>;
+  return (
+    <div style={{ padding: "1rem" }}>
+      <div id="resume">{renderSections}</div>
+    </div>
+  );
 }
 
 // function show(profile: Section, field: ProfileFieldKeys<typeof profile>) {
@@ -60,9 +55,13 @@ function RenderExperience({ exp }: { exp: profile.WorkExperience }) {
   return (
     <section>
       <h2 id="experience">Experience</h2>
-      {exp.jobs.map((section) => (
-        <RenderWorkSection key={section.title} section={section} />
-      ))}
+      {exp.jobs.flatMap((section) => {
+        return section.active ? (
+          <RenderWorkSection key={section.title} section={section} />
+        ) : (
+          []
+        );
+      })}
     </section>
   );
 }

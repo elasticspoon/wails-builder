@@ -5,6 +5,7 @@ export namespace profile {
 	    type: string;
 	    data: string;
 	    active: boolean;
+	    mandatory: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new ProfileField(source);
@@ -16,12 +17,14 @@ export namespace profile {
 	        this.type = source["type"];
 	        this.data = source["data"];
 	        this.active = source["active"];
+	        this.mandatory = source["mandatory"];
 	    }
 	}
 	export class HeaderSection {
 	    title: string;
 	    active: string;
 	    type: string;
+	    mandatory: boolean;
 	    name?: ProfileField;
 	    phone?: ProfileField;
 	    email?: ProfileField;
@@ -40,6 +43,7 @@ export namespace profile {
 	        this.title = source["title"];
 	        this.active = source["active"];
 	        this.type = source["type"];
+	        this.mandatory = source["mandatory"];
 	        this.name = this.convertValues(source["name"], ProfileField);
 	        this.phone = this.convertValues(source["phone"], ProfileField);
 	        this.email = this.convertValues(source["email"], ProfileField);
@@ -72,6 +76,7 @@ export namespace profile {
 	    title: string;
 	    active: string;
 	    type: string;
+	    mandatory: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new ProfileSection(source);
@@ -82,12 +87,14 @@ export namespace profile {
 	        this.title = source["title"];
 	        this.active = source["active"];
 	        this.type = source["type"];
+	        this.mandatory = source["mandatory"];
 	    }
 	}
 	export class JobSection {
 	    title: string;
 	    active: string;
 	    type: string;
+	    mandatory: boolean;
 	    jobTitle?: ProfileField;
 	    company?: ProfileField;
 	    location?: ProfileField;
@@ -105,6 +112,7 @@ export namespace profile {
 	        this.title = source["title"];
 	        this.active = source["active"];
 	        this.type = source["type"];
+	        this.mandatory = source["mandatory"];
 	        this.jobTitle = this.convertValues(source["jobTitle"], ProfileField);
 	        this.company = this.convertValues(source["company"], ProfileField);
 	        this.location = this.convertValues(source["location"], ProfileField);
@@ -136,6 +144,7 @@ export namespace profile {
 	    title: string;
 	    active: string;
 	    type: string;
+	    mandatory: boolean;
 	    jobs: JobSection[];
 	
 	    static createFrom(source: any = {}) {
@@ -147,6 +156,7 @@ export namespace profile {
 	        this.title = source["title"];
 	        this.active = source["active"];
 	        this.type = source["type"];
+	        this.mandatory = source["mandatory"];
 	        this.jobs = this.convertValues(source["jobs"], JobSection);
 	    }
 	

@@ -8,9 +8,10 @@ type Profile struct {
 }
 
 type ProfileSection struct {
-	Title  string `json:"title"`
-	Active string `json:"active"`
-	Type   string `json:"type"`
+	Id        string `json:"title"`
+	Active    string `json:"active"`
+	Type      string `json:"type"`
+	Mandatory bool   `json:"mandatory"`
 }
 
 type HeaderSection struct {
@@ -28,17 +29,17 @@ type HeaderSection struct {
 func defaultHeaderSection() *HeaderSection {
 	return &HeaderSection{
 		ProfileSection: ProfileSection{
-			Title:  "Header",
+			Id:     "Header",
 			Active: "true",
 			Type:   "section",
 		},
-		Name:      &ProfileField{Id: "name", Data: "Enter Name", Active: true},
-		Phone:     &ProfileField{Id: "phone", Data: "555-555-5555", Active: true},
-		Email:     &ProfileField{Id: "email", Data: "mail@example.com", Active: true},
-		Location:  &ProfileField{Id: "location", Data: "City, State", Active: true},
-		Github:    &ProfileField{Id: "github", Data: "github.com/username", Active: true},
-		Linkedin:  &ProfileField{Id: "linkedin", Data: "linkedin.com/in/username", Active: true},
-		Portfolio: &ProfileField{Id: "portfolio", Data: "portfolio.com", Active: true},
+		Name:      &ProfileField{Id: "name", Data: "Enter Name", Type: "field", Mandatory: true},
+		Phone:     &ProfileField{Id: "phone", Data: "555-555-5555", Type: "field", Active: true},
+		Email:     &ProfileField{Id: "email", Data: "mail@example.com", Type: "field", Active: true},
+		Location:  &ProfileField{Id: "location", Data: "City, State", Type: "field", Active: true},
+		Github:    &ProfileField{Id: "github", Data: "github.com/username", Type: "field", Active: true},
+		Linkedin:  &ProfileField{Id: "linkedin", Data: "linkedin.com/in/username", Type: "field", Active: true},
+		Portfolio: &ProfileField{Id: "portfolio", Data: "portfolio.com", Type: "field", Active: true},
 	}
 }
 
@@ -61,7 +62,7 @@ type JobSection struct {
 func defaultWorkExperience() *WorkExperience {
 	return &WorkExperience{
 		ProfileSection: ProfileSection{
-			Title:  "Work Experience",
+			Id:     "Work Experience",
 			Type:   "section",
 			Active: "true",
 		},
@@ -72,14 +73,14 @@ func defaultWorkExperience() *WorkExperience {
 func sampleJobSection1() *JobSection {
 	return &JobSection{
 		ProfileSection: ProfileSection{
-			Title:  "Pied Piper",
+			Id:     "Pied Piper",
 			Active: "true",
 			Type:   "section",
 		},
-		JobTitle:  &ProfileField{Id: "title", Data: "CEO/President", Type: "field", Active: true},
-		Company:   &ProfileField{Id: "company", Data: "Pied Piper", Type: "field", Active: true},
+		JobTitle:  &ProfileField{Id: "title", Data: "CEO/President", Type: "field", Mandatory: true},
+		Company:   &ProfileField{Id: "company", Data: "Pied Piper", Type: "field", Mandatory: true},
 		Location:  &ProfileField{Id: "location", Data: "City, State", Type: "field", Active: false},
-		StartDate: &ProfileField{Id: "startDate", Data: "Dec 2013", Type: "field", Active: true},
+		StartDate: &ProfileField{Id: "startDate", Data: "Dec 2013", Type: "field", Mandatory: true},
 		EndDate:   &ProfileField{Id: "endDate", Data: "Dec 2014", Type: "field", Active: true},
 		Description: &ProfileField{
 			Id: "description", Type: "field", Active: true,
@@ -99,14 +100,14 @@ compression.`,
 func sampleJobSection2() *JobSection {
 	return &JobSection{
 		ProfileSection: ProfileSection{
-			Title:  "Coder Dojo",
+			Id:     "Coder Dojo",
 			Active: "true",
 			Type:   "section",
 		},
-		JobTitle:  &ProfileField{Id: "title", Data: "Teacher", Type: "field", Active: true},
-		Company:   &ProfileField{Id: "company", Data: "Coder Dojo", Type: "field", Active: true},
+		JobTitle:  &ProfileField{Id: "title", Data: "Teacher", Type: "field", Mandatory: true},
+		Company:   &ProfileField{Id: "company", Data: "Coder Dojo", Type: "field", Mandatory: true},
 		Location:  &ProfileField{Id: "location", Data: "City, State", Type: "field", Active: false},
-		StartDate: &ProfileField{Id: "startDate", Data: "July 2013", Type: "field", Active: true},
+		StartDate: &ProfileField{Id: "startDate", Data: "July 2013", Type: "field", Mandatory: true},
 		EndDate:   &ProfileField{Id: "endDate", Data: "Dec 2013", Type: "field", Active: true},
 		Description: &ProfileField{
 			Id: "description", Type: "field", Active: true,
@@ -118,16 +119,29 @@ func sampleJobSection2() *JobSection {
 	}
 }
 
-type ProfileField struct {
-	Id     string `json:"id"`
-	Type   string `json:"type"`
-	Data   string `json:"data"`
-	Active bool   `json:"active"`
+type ProjectExperience struct {
+	ProfileSection
+	Projects []*ProjectSection `json:"projects"`
 }
 
-// func NewProfile() *Profile {
-// 	return &Profile{}
-// }
+type ProjectSection struct {
+	ProfileSection
+	JobTitle    *ProfileField   `json:"jobTitle"`
+	Company     *ProfileField   `json:"company"`
+	Location    *ProfileField   `json:"location"`
+	StartDate   *ProfileField   `json:"startDate"`
+	EndDate     *ProfileField   `json:"endDate"`
+	Description *ProfileField   `json:"description"`
+	JobDuties   []*ProfileField `json:"jobDuties"`
+}
+
+type ProfileField struct {
+	Id        string `json:"id"`
+	Type      string `json:"type"`
+	Data      string `json:"data"`
+	Active    bool   `json:"active"`
+	Mandatory bool   `json:"mandatory"`
+}
 
 func NewProfile() *Profile {
 	profile := &Profile{}

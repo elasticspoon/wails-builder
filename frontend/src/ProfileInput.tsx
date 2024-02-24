@@ -12,7 +12,14 @@ function TextInput({ label, ...props }: TextInputProps) {
   return (
     <>
       <label htmlFor={props.id || props.name}>{label}</label>
-      <input className="text-input" {...field} {...props} />
+      <input
+        className="text-input"
+        {...field}
+        {...props}
+        style={{
+          flexGrow: "1",
+        }}
+      />
     </>
   );
 }
@@ -31,83 +38,121 @@ function Checkbox({ ...props }) {
   );
 }
 
-function FieldInput({ name, parent }: { name: string; parent?: string }) {
-  function buildName() {
-    if (parent) {
-      return `${parent}.${name}.`;
-    }
-    return `${name}.`;
+function buildName(name: string | number, parent?: string) {
+  if (parent) {
+    return typeof name === "number"
+      ? `${parent}[${name}]`
+      : `${parent}.${name}`;
   }
+  return `${name}`;
+}
+
+function FieldInput({
+  id,
+  element,
+}: {
+  id: string;
+  element?: profile.ProfileField;
+}) {
   return (
-    <>
+    <div
+      style={{
+        display: "flex",
+        columnGap: ".5rem",
+        width: "100%",
+      }}
+    >
       <TextInput
-        label={name}
-        name={buildName() + "data"}
+        label={element?.id || " - "}
+        name={id + ".data"}
         type="text"
-        placeholder={`Enter a ${name}`}
+        placeholder={`Enter a ${element?.id}`}
       />
-      <Checkbox name={buildName() + "active"} />
-    </>
+      {!element?.mandatory && <Checkbox name={id + ".active"} />}
+    </div>
   );
 }
 
-type Section = profile.HeaderSection | profile.WorkExperience;
+function renderElement(element: ProfileElement, name: string) {
+  switch (element.type) {
+    case "section": {
+      return <ProfileInputSection parent={name} profile={element} key={name} />;
+    }
+    case "field": {
+      return (
+        <FieldInput
+          element={element as unknown as profile.ProfileField}
+          id={name}
+          key={name}
+        />
+      );
+    }
+  }
+}
 
 export function ProfileInput() {
   const { values: userProfile } = useFormikContext<profile.Profile>();
 
   const inputSections = Object.entries(userProfile).flatMap(([key, obj]) => {
-    if (typeof obj === "object") {
-      return generateInputSection(key, obj);
+    if (obj instanceof Array) {
+      return obj.map((item, index) => {
+        return renderElement(item, buildName(index, key));
+      });
+    } else if (obj && typeof obj === "object") {
+      return renderElement(obj, buildName(key));
     } else {
       return [];
     }
   });
 
-  function generateInputSection(key: string, section: Section) {
-    switch (key) {
-      case "header": {
-        return (
-          <ProfileInputSection
-            parent={key}
-            profile={section as profile.HeaderSection}
-            key={key}
-          />
-        );
-      }
-      case "workExperience": {
-        return (
-          <ProfileInputSection
-            parent={key}
-            profile={section as profile.WorkExperience}
-            key={key}
-          />
-        );
-      }
-    }
-  }
-
   return (
-    <Form>
+    <Form
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        flexGrow: "1",
+      }}
+    >
       {inputSections}
       <button type="submit">Save</button>
     </Form>
   );
 }
 
+type ProfileElement =
+  | profile.HeaderSection
+  | profile.WorkExperience
+  | profile.ProfileField;
+
 function ProfileInputSection({
   profile,
   parent,
 }: {
-  profile: Section;
+  profile: ProfileElement;
   parent: string;
 }) {
   const fields = Object.entries(profile).flatMap(([key, data]) => {
-    if (data && typeof data === "object") {
-      return <FieldInput parent={parent} name={key} key={key} />;
+    if (data instanceof Array) {
+      return data.map((item, index) => {
+        return renderElement(item, buildName(index, `${parent}.${key}`));
+      });
+    } else if (data && typeof data === "object") {
+      return renderElement(data, buildName(key, parent));
     } else {
       return [];
     }
   });
-  return <section>{fields}</section>;
+  return (
+    <section
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        border: "1px solid black",
+        padding: "1rem",
+        flexGrow: "1",
+      }}
+    >
+      {fields}
+    </section>
+  );
 }
