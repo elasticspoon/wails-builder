@@ -31,7 +31,14 @@ function App() {
   }
 
   return (
-    <div id="App">
+    <div
+      id="App"
+      style={
+        {
+          // height: "100dvh",
+        }
+      }
+    >
       <Navbar updateProfile={updateProfile} render={getHtml} />
       {userProfile && (
         <Formik

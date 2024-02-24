@@ -1,7 +1,11 @@
 import { profile } from "../wailsjs/go/models";
 import { useFormikContext } from "formik";
 
-type Section = profile.HeaderSection | profile.WorkExperience;
+type Section =
+  | profile.HeaderSection
+  | profile.WorkExperience
+  | profile.ProjectExperience
+  | profile.EducationSection;
 
 export function ProfileRender({ profile }: { profile?: profile.Profile }) {
   let userProfile;
@@ -21,7 +25,7 @@ export function ProfileRender({ profile }: { profile?: profile.Profile }) {
   });
 
   function generateRenderSection(key: string, section: Section) {
-    if (!section) return;
+    if (!section || (!section.mandatory && !section.active)) return;
     switch (key) {
       case "header": {
         return (
@@ -33,11 +37,34 @@ export function ProfileRender({ profile }: { profile?: profile.Profile }) {
           <RenderExperience exp={section as profile.WorkExperience} key={key} />
         );
       }
+      case "projectExperience": {
+        return (
+          <RenderProjects
+            projects={section as profile.ProjectExperience}
+            key={key}
+          />
+        );
+      }
+      case "education": {
+        return (
+          <RenderEducationSection
+            education={section as profile.EducationSection}
+            key={key}
+          />
+        );
+      }
     }
   }
 
   return (
-    <div style={{ padding: "1rem" }}>
+    <div
+      style={{
+        padding: "1rem",
+        // maxHeight: "100dvh",
+        // overflowY: "scroll",
+      }}
+      className="render-container"
+    >
       <div id="resume">{renderSections}</div>
     </div>
   );
@@ -51,6 +78,75 @@ export function ProfileRender({ profile }: { profile?: profile.Profile }) {
 //   [K in keyof T]-?: T[K] extends profile.ProfileField | undefined ? K : never;
 // }[keyof T];
 
+function RenderEducationSection({
+  education,
+}: {
+  education: profile.EducationSection;
+}) {
+  return (
+    <section>
+      <h2 id="projects">Education</h2>
+      {education.educations.flatMap((section) => {
+        return section.active ? (
+          <RenderEducation key={section.title} section={section} />
+        ) : (
+          []
+        );
+      })}
+    </section>
+  );
+}
+
+function RenderEducation({ section }: { section: profile.Education }) {
+  return (
+    <>
+      <h3>
+        <span>{section.title}</span>
+        <span>
+          {section.startDate?.data} -{" "}
+          {section.endDate?.active ? section.endDate.data : "present"}
+        </span>
+      </h3>
+      {section.certificate?.active && <p>{section.certificate.data}</p>}
+    </>
+  );
+}
+function RenderProjects({ projects }: { projects: profile.ProjectExperience }) {
+  return (
+    <section>
+      <h2 id="projects">Projects</h2>
+      {projects.projects.flatMap((section) => {
+        return section.active ? (
+          <RenderProject key={section.title} section={section} />
+        ) : (
+          []
+        );
+      })}
+    </section>
+  );
+}
+
+function RenderProject({ section }: { section: profile.ProjectSection }) {
+  return (
+    <>
+      <h3>
+        <span>{section.title}</span>
+        <span>
+          {section.startDate?.data} -{" "}
+          {section.endDate ? section.endDate.data : "present"}
+        </span>
+      </h3>
+      {section.description?.active && <p>{section.description.data}</p>}
+      {section.projectDuties.length > 0 && (
+        <ul>
+          {section.projectDuties.map((duty, index) => {
+            return duty.active && <li key={index}>{duty.data}</li>;
+          })}
+        </ul>
+      )}
+    </>
+  );
+}
 function RenderExperience({ exp }: { exp: profile.WorkExperience }) {
   return (
     <section>

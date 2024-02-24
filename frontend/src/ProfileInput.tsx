@@ -111,6 +111,9 @@ export function ProfileInput() {
         display: "flex",
         flexDirection: "column",
         flexGrow: "1",
+        maxHeight: "100dvh",
+        overflowY: "scroll",
+        paddingInline: "1rem",
       }}
     >
       {inputSections}
@@ -122,7 +125,8 @@ export function ProfileInput() {
 type ProfileElement =
   | profile.HeaderSection
   | profile.WorkExperience
-  | profile.ProfileField;
+  | profile.ProfileField
+  | profile.EducationSection;
 
 function ProfileInputSection({
   profile,
@@ -143,16 +147,27 @@ function ProfileInputSection({
     }
   });
   return (
-    <section
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        border: "1px solid black",
-        padding: "1rem",
-        flexGrow: "1",
-      }}
-    >
-      {fields}
+    <section>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <span>{(profile as profile.ProfileSection).title}</span>
+        {!profile?.mandatory && <Checkbox name={parent + ".active"} />}
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          border: "1px solid black",
+          padding: "1rem",
+          flexGrow: "1",
+        }}
+      >
+        {fields}
+      </div>
     </section>
   );
 }
