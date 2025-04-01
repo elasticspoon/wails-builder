@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"fmt"
 	"os"
 	"text/template"
 	"time"
@@ -15,7 +16,9 @@ import (
 // Convert HTML to PDF using Chrome's print-to-PDF feature
 func (g *Generator) GeneratePDF(htmlContent string) error {
 	// Create a base64-encoded data URI for the HTML content
-	dataURI := "data:text/html;base64," + base64.StdEncoding.EncodeToString([]byte(htmlContent))
+	styledHTML := renderHtml(htmlContent)
+	// Encode the HTML content to base64 to create a page chrome can navigate to
+	dataURI := "data:text/html;base64," + base64.StdEncoding.EncodeToString([]byte(styledHTML))
 
 	// Create context with timeout
 	ctx, cancel := chromedp.NewContext(context.Background())
@@ -52,15 +55,21 @@ func (g *Generator) GeneratePDF(htmlContent string) error {
 type Generator struct{}
 
 func renderHtml(dom string) string {
+	stylesData, _ := os.ReadFile("./backend/styles.css")
+	fmt.Println("Styles data:", string(stylesData))
+
 	tmpl := template.Must(template.ParseFiles("./backend/template.html"))
 	output := new(bytes.Buffer)
 	data := struct {
-		PageData string
+		PageData  string
+		StyleData string
 	}{
-		PageData: dom,
+		PageData:  dom,
+		StyleData: "<style>" + string(stylesData) + "</style>",
 	}
 
 	tmpl.Execute(output, data)
 
+	fmt.Println("Rendered HTML:", output.String())
 	return output.String()
 }

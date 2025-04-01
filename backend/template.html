@@ -1,10 +1,14 @@
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta property="time_built" content="#{Time.now.iso8601}" />
-    <title>PDF</title>
-  </head>
-  <body>
-    {{.PageData}}
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta property="time_built" content="#{Time.now.iso8601}" />
+  <title>PDF</title>
+  {{ .StyleData }}
+</head>
+
+<body>
+  {{ .PageData }}
+</body>
+
 </html>
