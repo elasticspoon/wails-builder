@@ -50,7 +50,9 @@ func renderHtml(dom string) string {
 	output := new(bytes.Buffer)
 	data := struct {
 		PageData string
-	}{PageData: dom}
+	}{
+		PageData: dom,
+	}
 
 	tmpl.Execute(output, data)
 
