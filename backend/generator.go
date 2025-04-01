@@ -2,48 +2,54 @@ package profile
 
 import (
 	"bytes"
-	"fmt"
-	"strings"
+	"context"
+	"encoding/base64"
+	"os"
 	"text/template"
+	"time"
 
-	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
+	"github.com/chromedp/cdproto/page"
+	"github.com/chromedp/chromedp"
 )
 
-type Generator struct{}
+// Convert HTML to PDF using Chrome's print-to-PDF feature
+func (g *Generator) GeneratePDF(htmlContent string) error {
+	// Create a base64-encoded data URI for the HTML content
+	dataURI := "data:text/html;base64," + base64.StdEncoding.EncodeToString([]byte(htmlContent))
 
-func (g *Generator) GeneratePDF(dom string) error {
-	pdfg, err := wkhtmltopdf.NewPDFGenerator()
+	// Create context with timeout
+	ctx, cancel := chromedp.NewContext(context.Background())
+	defer cancel()
+	ctx, cancel = context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+
+	// Capture the PDF bytes
+	var pdfBuffer []byte
+	err := chromedp.Run(ctx,
+		chromedp.Navigate(dataURI),
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			// Execute Page.printToPDF command
+			buf, _, err := page.PrintToPDF().
+				WithPrintBackground(true).
+				WithPreferCSSPageSize(true).
+				WithLandscape(false).
+				Do(ctx)
+			if err != nil {
+				return err
+			}
+			pdfBuffer = buf
+			return nil
+		}),
+	)
 	if err != nil {
 		return err
 	}
-	pdfg.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA5)
 
-	// Create a new input page from an URL
-	v := renderHtml(dom)
-	page := wkhtmltopdf.NewPageReader(strings.NewReader(v))
-
-	// Set options for this page
-	page.UserStyleSheet.Set("./backend/styles.css")
-
-	// Add to document
-	pdfg.AddPage(page)
-
-	// Create PDF document in internal buffer
-	err = pdfg.Create()
-	if err != nil {
-		return fmt.Errorf("failed creating PDF to: %w", err)
-	}
-
-	// Write buffer contents to file on disk
-	err = pdfg.WriteFile("./simplesample.pdf")
-	if err != nil {
-		return fmt.Errorf("writing buffer to disk to: %w", err)
-	}
-
-	fmt.Println("Done")
-	return nil
+	// Save PDF to file
+	return os.WriteFile("./test.pdf", pdfBuffer, 0644)
 }
+
+type Generator struct{}
 
 func renderHtml(dom string) string {
 	tmpl := template.Must(template.ParseFiles("./backend/template.html"))
